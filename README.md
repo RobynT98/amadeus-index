@@ -12,7 +12,7 @@ En snabb och interaktiv indexsida över vanliga **Amadeus-kommandon**, uppdelade
 
 ## 🚀 Användning
 1. Öppna [index.html](index.html) i valfri webbläsare  
-   *(eller via [GitHub Pages-länken](https://DITT-NAMN.github.io/amadeus-index) om du aktiverat Pages).*  
+   *(eller via [https://robynt98.github.io/amadeus-index/) om du aktiverat Pages).*  
 2. Sök efter kommando eller bläddra i modulerna.  
 3. Klicka **Kopiera** för att snabbt använda kommandot i Amadeus.  
 
