@@ -11,8 +11,7 @@ En snabb och interaktiv indexsida över vanliga **Amadeus-kommandon**, uppdelade
 - **Vy**: växla mellan kompakt och luftig vy.
 
 ## 🚀 Användning
-1. Öppna [index.html](index.html) i valfri webbläsare  
-   *(eller via [https://robynt98.github.io/amadeus-index/) om du aktiverat Pages).*  
+1. Öppna [https://robynt98.github.io/amadeus-index/) ).*  
 2. Sök efter kommando eller bläddra i modulerna.  
 3. Klicka **Kopiera** för att snabbt använda kommandot i Amadeus.  
 
