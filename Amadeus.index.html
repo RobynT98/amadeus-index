@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amadeus — Kommandon & Snabbindex</title>
+  <meta name="theme-color" content="#0f172a"/>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f162a;
+      --ink:#e6f0ff;
+      --muted:#98a4c0;
+      --brand:#66e0ff;
+      --brand-2:#4f46e5;
+      --accent:#22d3ee;
+      --chip:#121a33;
+      --ok:#86efac;
+      --warn:#fde047;
+      --danger:#f87171;
+      --ring: rgba(102,224,255,.35);
+      --card:#0b132a;
+      --border:#1e2a4a;
+      --shadow: 0 12px 28px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font:15px/1.55 system-ui,Segoe UI,Roboto,Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 10% -20%, rgba(79,70,229,.22), transparent),
+        linear-gradient(180deg, #0b1020 0%, #090f1e 100%);
+    }
+    .wrap{max-width:1100px; margin:auto; padding:28px 14px 80px}
+    header.hero{
+      background:linear-gradient(180deg, rgba(34,211,238,.08), rgba(79,70,229,.05));
+      border:1px solid rgba(102,224,255,.18);
+      border-radius:20px; padding:20px;
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0 0 6px; font-size:clamp(26px,4vw,40px); letter-spacing:.2px}
+    p.lead{margin:0; color:var(--muted)}
+    .controls{ display:grid; gap:10px; grid-template-columns: 1fr 220px 220px; margin:18px 0 14px }
+    input, select, button{
+      background:var(--panel); color:var(--ink);
+      border:1px solid var(--border); border-radius:12px;
+      padding:12px 14px; outline:0; transition:.15s;
+    }
+    input:focus, select:focus{ box-shadow:0 0 0 3px var(--ring); border-color:#2a3a64 }
+    .quickbar{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 16px }
+    .chip{
+      background:var(--chip); border:1px solid var(--border); color:#cfe3ff;
+      padding:6px 10px; border-radius:999px; font-size:12px; cursor:pointer; user-select:none;
+    }
+    .chip.active{ outline:2px solid var(--accent); outline-offset:2px }
+    .grid{ display:grid; gap:14px; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)) }
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:16px;
+      overflow:hidden; display:flex; flex-direction:column; box-shadow: var(--shadow);
+      position:relative;
+    }
+    .card::before{
+      content:""; position:absolute; inset:0; pointer-events:none; border-radius:16px; padding:1px;
+      background:linear-gradient(135deg, rgba(102,224,255,.75), rgba(79,70,229,.65));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;
+    }
+    .card-body{ padding:14px 14px 10px }
+    .k{ font-weight:800; letter-spacing:.4px; font-size:16px; margin:0 0 4px }
+    .meta{ color:var(--muted); font-size:12px; margin:0 0 8px }
+    .blurb{ margin:6px 0 10px; color:#d9e7ff; min-height:44px }
+    .example{
+      background: rgba(34,211,238,.08); border:1px dashed rgba(102,224,255,.28);
+      color:#c7e9ff; padding:8px 10px; border-radius:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12.5px;
+    }
+    .taglist{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 8px }
+    .tag{ background:#0f1a36; color:#bcd8ff; border:1px solid #1f2d56; font-size:11px; padding:4px 8px; border-radius:999px }
+    .category-bar{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin:16px 0 8px;
+    }
+    .category{
+      background:linear-gradient(180deg, rgba(15,22,42,.9), rgba(17,24,39,.9));
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:12px; padding:10px 12px;
+    }
+    .category h3{ margin:0 0 6px; font-size:13px; color:#a5b4fc; letter-spacing:.3px }
+    .category p{ margin:0; color:#9fb3d9; font-size:12px }
+    footer{ margin-top:22px; color:var(--muted); font-size:12px; text-align:center }
+    .empty{ text-align:center; opacity:.7; padding:30px 10px; border:1px dashed var(--border); border-radius:14px }
+    .toolbar{
+      display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:12px 0 10px;
+    }
+    .pill{
+      background:linear-gradient(180deg, #22d3ee, #4f46e5);
+      color:#081225; font-weight:800; border:none; border-radius:999px; padding:8px 12px; font-size:12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    }
+    .legend{ font-size:12px; color:var(--muted) }
+    @media (max-width:780px){
+      .controls{ grid-template-columns: 1fr 1fr; }
+      .controls > :last-child{ grid-column: 1 / -1; }
+    }
+/* === Kopiera-knapp på varje kort === */
+.copybtn{
+  position:absolute; top:10px; right:10px;
+  background:rgba(102,224,255,.12); border:1px solid rgba(102,224,255,.3);
+  color:#cfe3ff; border-radius:10px; padding:6px 10px; font-size:12px; cursor:pointer;
+}
+.copybtn:active{ transform:scale(.98) }
+
+/* === Kompakt vy toggle === */
+.compact .card-body{ padding:10px 10px 8px }
+.compact .blurb{ min-height:auto }
+.compact .grid{ gap:10px }
+
+/* === Ljus tema === */
+:root.light{
+  --bg:#f6f8ff; --panel:#eef2ff; --ink:#12131a; --muted:#505a78; --card:#ffffff; --border:#c8d1f5;
+}
+.light body{
+  background: linear-gradient(180deg, #eef2ff 0%, #f8fbff 100%);
+}
+.light .example{ color:#18334f; border-color:#9db7ff; background:#eaf2ff }
+.card.compact .card-body{ padding:10px 10px 8px }
+.card.compact .blurb{ min-height:auto }
+:root.light{
+  --bg:#f6f8ff; --panel:#eef2ff; --ink:#12131a; --muted:#505a78; --card:#ffffff; --border:#c8d1f5;
+}
+.light body{
+  background: linear-gradient(180deg, #eef2ff 0%, #f8fbff 100%);
+}
+.light .example{ color:#18334f; border-color:#9db7ff; background:#eaf2ff }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Amadeus — Kommandon & Snabbindex</h1>
+      <p class="lead">Färgad översikt för snabb sökning: PNR, pris, biljettering, offers, reissue, UMNR, med mera.</p>
+      <div class="toolbar">
+        <span class="pill">⌘K / Ctrl+K — Fokusera sök</span>
+        <span class="legend">Filtrera med taggar eller skriv ett kommando (t.ex. “FXP”).</span>
+      </div>
+      <div class="category-bar">
+        <div class="category"><h3>PNR & Bokning</h3><p>SS, NM, AP*, SR, TKTL, ER, IG, RT, MS…</p></div>
+        <div class="category"><h3>Pris & Fare Rules</h3><p>FXP, FXA, FXB, FXX, FQD, FQN, PEN, TQT…</p></div>
+        <div class="category"><h3>Biljettering</h3><p>FP, TTP/TKT, TTP/RT, EMD/TSM-flöden.</p></div>
+        <div class="category"><h3>Reissue/Revalidate</h3><p>FXI, FXQ, FXF, ETRV, TWD/Lxx…</p></div>
+        <div class="category"><h3>Sök & Filter</h3><p>AN/AE, SN, /ABA, /ASK, /KX, /FN, /BX…</p></div>
+        <div class="category"><h3>Referens</h3><p>GGAPT, GGAIR, GGCODE, HE, TN, DO…</p></div>
+      </div>
+    </header>
+<div class="toolbar">
+  <span class="pill">⌘K / Ctrl+K — Fokusera sök</span>
+  <span class="legend">Filtrera med taggar eller skriv ett kommando (t.ex. “FXP”).</span>
+  <!-- Globala knappar -->
+  <button id="theme" class="pill" type="button">Ljus/Mörk</button>
+  <button id="density" class="pill" type="button">Kompakt vy</button>
+</div>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Sök kommando, text eller tagg …" />
+      <select id="tagSelect">
+        <option value="all">Alla taggar</option>
+      </select>
+      <select id="sort">
+        <option value="cmd-asc">Kommando A–Ö</option>
+        <option value="cmd-desc">Kommando Ö–A</option>
+        <option value="group">Efter kategori (tagg)</option>
+      </select>
+    </div>
+
+    <div class="quickbar" id="chips"></div>
+
+    <main id="list" class="grid" aria-live="polite"></main>
+    <div id="empty" class="empty" hidden>Inget matchade din filtrering.</div>
+
+    <footer>© Amadeus Index — byggd för snabb Accode-åtkomst</footer>
+  </div>
+  <template id="cardTpl">
+    <article class="card">
+      <div class="card-body">
+        <h2 class="k"></h2>
+        <p class="meta"></p>
+        <button class="copybtn" title="Kopiera kommando" aria-label="Kopiera">Kopiera</button>
+        <p class="blurb"></p>
+        <div class="example" hidden></div>
+        <div class="taglist"></div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const DATA_PNR = [
+  {"cmd":"SS","title":"SS — Sell Segment","desc":"Boka upp given availability line (sälja plats).","example":"SS1C1","tags":["PNR","sell"]},
+  {"cmd":"NM","title":"NM — Name Element","desc":"Lägg till passagerarnamn.","example":"NM1TURESSON/CONRI MR","tags":["PNR","names"]},
+  {"cmd":"APM","title":"APM — Mobile","desc":"Lägg till mobilnummer i PNR.","example":"APM-0046792019653","tags":["PNR","contacts"]},
+  {"cmd":"APE","title":"APE — Email","desc":"Lägg till e-postadress i PNR.","example":"APE-CONRI@MAIL.SE","tags":["PNR","contacts"]},
+  {"cmd":"SR CTCM","title":"SR CTCM — Contact Mobile","desc":"Mobilnummer som SSR till flygbolaget.","example":"SRCTCM-00467071212121","tags":["PNR","SSR","contacts"]},
+  {"cmd":"SR CTCE","title":"SR CTCE — Contact Email","desc":"E-postadress som SSR till flygbolaget.","example":"SRCTCE-anna//mail.se","tags":["PNR","SSR","contacts"]},
+  {"cmd":"RM","title":"RM — Remark","desc":"Intern remark i PNR.","example":"RM TEST BOOKING","tags":["PNR","remarks"]},
+  {"cmd":"RC","title":"RC — Confidential Remark","desc":"Dolt remark, syns ej på itinerary.","example":"RC INTERNAL ONLY","tags":["PNR","remarks"]},
+  {"cmd":"RIR","title":"RIR — Itinerary Remark","desc":"Remark som visas på kundens itinerary.","example":"RIR Contact at gate","tags":["PNR","remarks"]},
+  {"cmd":"TKTL","title":"TKTL — Ticketing Time Limit","desc":"Sätt biljettdeadline för bokning.","example":"TKTL25APR","tags":["PNR","ticketing"]},
+  {"cmd":"ER","title":"ER — End and Retrieve","desc":"Spara bokning och få PNR-locator.","example":"ER","tags":["PNR","save"]},
+  {"cmd":"IG","title":"IG — Ignore","desc":"Avbryt utan att spara ändringar.","example":"IG","tags":["PNR","safety"]},
+  {"cmd":"RT","title":"RT — Retrieve PNR","desc":"Hämta sparad bokning.","example":"RT KZ6G63","tags":["PNR","retrieve"]},
+  {"cmd":"SPX","title":"SPX — Split PNR","desc":"Splitta ut passagerare till ny PNR.","example":"SP3 → EF → ER","tags":["PNR","split"]},
+  {"cmd":"EF","title":"EF — End Split","desc":"Bekräfta split och skapa AXR-länk.","example":"EF","tags":["PNR","split"]},
+  {"cmd":"RRN","title":"RRN — Copy Seg+AP (no link)","desc":"Kopiera flygsträcka+AP rader utan länk.","example":"RRN/X","tags":["PNR","copy"]},
+  {"cmd":"RRA","title":"RRA — Copy Segments (with link)","desc":"Kopiera flygsträcka och skapa länk mellan PNR.","example":"RRA/4","tags":["PNR","copy"]},
+  {"cmd":"RRI","title":"RRI — Copy Segments (independent)","desc":"Kopiera segment utan länk.","example":"RRI/X","tags":["PNR","copy"]},
+  {"cmd":"RRP","title":"RRP — Copy Passenger Data","desc":"Kopiera passagerardata mellan PNR.","example":"RRP/X","tags":["PNR","copy"]},
+  {"cmd":"MS","title":"MS — Move to Line","desc":"Flytta markören till rad.","example":"MS 4","tags":["PNR","navigation"]},
+  {"cmd":"GP","title":"GP — Move to Page","desc":"Hoppa till viss sida i PNR.","example":"GP INT","tags":["PNR","navigation"]},
+  {"cmd":"MU/MD/MT/MB","title":"MU/MD/MT/MB — Navigation","desc":"Scrolla i PNR (up, down, top, bottom).","example":"MU","tags":["PNR","navigation"]},
+  {"cmd":"NHP","title":"NHP — Missing Names/Seats","desc":"Felmeddelande: saknar namn/stolsinfo.","example":"NHP på HK-rad","tags":["PNR","error"]},
+  {"cmd":"RMEFTERN","title":"RMEFTERN — Save under Surname","desc":"Spara PNR under efternamn för retrieval.","example":"RMTURESSON","tags":["PNR","save"]},
+  {"cmd":"SIARNK","title":"SIARNK — Special Instruction","desc":"Instruktion vid hemresa från annan plats.","example":"SIARNK ARN","tags":["PNR","special"]}
+];
+const DATA_AVAIL = [
+  {"cmd":"AN","title":"AN — Availability (All times)","desc":"Visa alla avgångar en viss dag.","example":"AN15MAYSTOLLA/ASK","tags":["availability","search"]},
+  {"cmd":"AE","title":"AE — Availability (Shortest time)","desc":"Visa avgångar med kortast flygtid.","example":"AE15MAYSTOLLA/ASK","tags":["availability","search"]},
+  {"cmd":"SN","title":"SN — Availability by carrier","desc":"Visa avgångar med valt flygbolag.","example":"SN SK","tags":["availability","carrier"]},
+  {"cmd":"TN","title":"TN — Timetable","desc":"Visar tidtabell för flight.","example":"TN15MAYSTOLLA","tags":["availability","timetable"]},
+
+  {"cmd":"/ABA","title":"/ABA — Include airline(s)","desc":"Filtrera på max 6 flygbolag.","example":"AN21MAYSTOLON/ABA,SK","tags":["availability","filter"]},
+  {"cmd":"/ASK","title":"/ASK — Operating airline only","desc":"Visa endast opererande flygbolag.","example":"AN21MAYSTOLON/ASK","tags":["availability","filter"]},
+  {"cmd":"/ASU","title":"/ASU — Exclude airline","desc":"Uteslut visst flygbolag.","example":"AN21MAYSTOLON/ASU","tags":["availability","filter"]},
+  {"cmd":"/CH","title":"/CH — Booking class filter","desc":"Filtrera på specifika bokningsklasser (RBD).","example":"AN21MAYSTOLON/CHY,B","tags":["availability","filter"]},
+  {"cmd":"/KX","title":"/KX — Cabin filter","desc":"Filtrera på kabinklass (F,C,Y,W,M).","example":"AN21MAYSTOLON/KC","tags":["availability","filter"]},
+  {"cmd":"/KW+","title":"/KW+ — Alternative classes","desc":"Visa andra klasser om vald saknas.","example":"AN21MAYSTOLON/KW+","tags":["availability","filter"]},
+  {"cmd":"/FN","title":"/FN — Nonstop only","desc":"Visa endast direktflyg.","example":"AN21MAYSTOLON/FN","tags":["availability","filter"]},
+  {"cmd":"/FD","title":"/FD — Nonstop only (alias)","desc":"Samma som /FN.","example":"AN21MAYSTOLON/FD","tags":["availability","filter"]},
+  {"cmd":"/BX","title":"/BX — Seats required","desc":"Ange antal säten som krävs.","example":"AN21MAYSTOLON/B2","tags":["availability","filter"]},
+  {"cmd":"/XCPH","title":"/XCPH — Exclude via city","desc":"Uteslut anslutning via viss stad.","example":"AN21MAYSTOLON/XCPH","tags":["availability","filter"]},
+  {"cmd":"/IO","title":"/IO — Same airline only","desc":"Samtliga segment på samma flygbolag.","example":"AN21MAYSTOLON/IO","tags":["availability","filter"]},
+
+  {"cmd":"ACR","title":"ACR — Change availability date","desc":"Ändra visning till annat datum/tid.","example":"ACR12MAY1900","tags":["availability","navigation"]},
+  {"cmd":"ACR+/-","title":"ACR+/- offset","desc":"Flytta visning X dagar framåt/bakåt.","example":"ACR3 (tre dagar senare)","tags":["availability","navigation"]}
+];
+const DATA_PRICING = [
+  {"cmd":"FXP","title":"FXP — Price Itinerary (keeps RBD)","desc":"Prissätter bokade klasser och skapar TST.","example":"FXP/R,UP","tags":["pricing","TST"]},
+  {"cmd":"FXA","title":"FXA — Low fare search","desc":"Visar alternativa lägsta priser, behåller inte klasser.","example":"FXA/R,UP","tags":["pricing","search"]},
+  {"cmd":"FXB","title":"FXB — Auto lowest (rebook)","desc":"Bokar om till lägsta tillgängliga fare.","example":"FXB/R,UP","tags":["pricing","rebook"]},
+  {"cmd":"FXD","title":"FXD — Master pricing","desc":"Jämför prissättning mellan olika validerande carriers.","example":"FXD/R,UP","tags":["pricing","fares"]},
+  {"cmd":"FXX","title":"FXX — Informative pricing","desc":"Visar indikation på pris utan att skapa TST.","example":"FXX/R,UP","tags":["pricing","informative"]},
+  {"cmd":"FXT","title":"FXT — Choose fare alt","desc":"Välj alternativ från fare listan.","example":"FXT2","tags":["pricing","fares"]},
+  {"cmd":"FXS","title":"FXS — Select pax/segments","desc":"Begränsa prissättning till viss pax eller segment.","example":"FXS/P1/S2","tags":["pricing","TST"]},
+  {"cmd":"FXU","title":"FXU — Update TST","desc":"Uppdaterar TST efter rebooking.","example":"FXU3","tags":["pricing","TST"]},
+  {"cmd":"FXZ","title":"FXZ — Book without pricing","desc":"Bokar segment utan att prissätta.","example":"FXZ4","tags":["pricing","PNR"]},
+
+  {"cmd":"FQQ","title":"FQQ — Fare quote info","desc":"Visar detaljerad fare info för en rad.","example":"FQQ3","tags":["pricing","fares"]},
+  {"cmd":"FQD","title":"FQD — Fare display","desc":"Fare display mellan city pair på visst datum.","example":"FQDSTOLON/D03MAY/R,UP","tags":["pricing","fares"]},
+  {"cmd":"FQN","title":"FQN — Fare basis rules","desc":"Visar regelkapitel för fare basis.","example":"FQN01*","tags":["pricing","rules"]},
+  {"cmd":"PEN","title":"PEN — Penalties","desc":"Visar penalty-chapter för vald fare.","example":"PEN","tags":["pricing","rules"]},
+
+  {"cmd":"TQT","title":"TQT — TST display","desc":"Visar TST details (graphic).","example":"TQT","tags":["pricing","TST"]},
+  {"cmd":"TTE/ALL","title":"TTE/ALL — Delete all TST","desc":"Raderar alla TST i PNR.","example":"TTE/ALL","tags":["pricing","TST"]},
+  {"cmd":"TTE/Lx","title":"TTE/Lx — Delete line TST","desc":"Raderar en specifik TST-line.","example":"TTE/L2","tags":["pricing","TST"]},
+
+  {"cmd":"/SBF","title":"/SBF — Include baggage","desc":"Inkludera bagage vid pricing.","example":"FXP/R,UP/SBF","tags":["pricing","baggage"]},
+
+  {"cmd":"OFFER FLOW","title":"Offer flow (overview)","desc":"FXX → FXT → OFS → OFV → OFK → ER.","example":"FXX/R,UP → FXT1 → OFS → OFV1 → OFK1 → ER","tags":["pricing","offers"]}
+];
+const DATA_OFFERS = [
+  {"cmd":"OFS","title":"OFS — Store offer","desc":"Lagrar en vald fare som ett offer i PNR.","example":"OFS","tags":["offers","pricing"]},
+  {"cmd":"OFV","title":"OFV — Verify seats","desc":"Verifierar säten för lagrat offer.","example":"OFV1","tags":["offers","pricing"]},
+  {"cmd":"OFK","title":"OFK — Confirm offer","desc":"Bekräftar ett offer och bokar in.","example":"OFK1","tags":["offers","pricing"]},
+  {"cmd":"OFVX","title":"OFVX — Verify alt offer","desc":"Verifierar alternativ offer (extended).","example":"OFVX2","tags":["offers","pricing"]},
+  {"cmd":"RTOF","title":"RTOF — Return to offers","desc":"Återvänder till listan av offers.","example":"RTOF","tags":["offers","navigation"]},
+  {"cmd":"OFFER FLOW","title":"Offer Flow (overview)","desc":"Fullt flöde: FXX → FXT → OFS → OFV → OFK → ER.","example":"FXX/R,UP → FXT1 → OFS → OFV1 → OFK1 → ER","tags":["offers","pricing"]}
+];
+const DATA_TICKETING = [
+  {"cmd":"FP","title":"FP — Form of Payment","desc":"Ange betalningssätt för biljettering.","example":"FP CASH","tags":["ticketing","payment"]},
+  {"cmd":"FP CC","title":"FP — Credit Card","desc":"Kreditkort som betalning, inkl. typ + nummer.","example":"FP VI4444333322221111/1219","tags":["ticketing","payment"]},
+  {"cmd":"FP INV","title":"FP — Invoice","desc":"Fakturabetalning.","example":"FP INV12345","tags":["ticketing","payment"]},
+  {"cmd":"FPNONREF","title":"FP NONREF","desc":"Betalning utan återbetalning.","example":"FPNONREF","tags":["ticketing","payment"]},
+
+  {"cmd":"AX","title":"AX — American Express","desc":"Kreditkortskod för AmEx.","example":"FP AX371449635398431/1225","tags":["ticketing","payment"]},
+  {"cmd":"VI","title":"VI — Visa","desc":"Kreditkortskod för Visa.","example":"FP VI4444333322221111/1225","tags":["ticketing","payment"]},
+  {"cmd":"CA","title":"CA — Mastercard","desc":"Kreditkortskod för Mastercard (CA).","example":"FP CA5105105105105100/1225","tags":["ticketing","payment"]},
+  {"cmd":"DC","title":"DC — Diners Club","desc":"Kreditkortskod för Diners Club.","example":"FP DC30000000000004/1225","tags":["ticketing","payment"]},
+
+  {"cmd":"TTP","title":"TTP — Ticketing (issue)","desc":"Validera och utfärda e-biljett.","example":"TTP","tags":["ticketing","issue"]},
+  {"cmd":"TTP/RT","title":"TTP/RT — Issue & retrieve","desc":"Utfärdar biljett och hämtar PNR direkt.","example":"TTP/RT","tags":["ticketing","issue"]},
+  {"cmd":"TKT","title":"TKT — Alternative entry","desc":"Alias till TTP.","example":"TKT","tags":["ticketing","issue"]},
+
+  {"cmd":"FXG/ALL","title":"FXG/ALL — Price ancillaries","desc":"Prissättning av tilläggstjänster (EMD).","example":"FXG/ALL","tags":["EMD","ancillary"]},
+  {"cmd":"TQM","title":"TQM — TSM display","desc":"Visar detaljer för TSM (ancillary pricing).","example":"TQM","tags":["EMD","TSM"]},
+  {"cmd":"TMI","title":"TMI — Modify TSM","desc":"Ändra TSM (t.ex. betalning).","example":"TMI/FP-CASH","tags":["EMD","TSM"]},
+  {"cmd":"TTM","title":"TTM — Issue EMD","desc":"Utfärdar EMD (Electronic Misc Document).","example":"TTM","tags":["EMD","issue"]}
+];
+const DATA_SSR = [
+  {"cmd":"SR","title":"SR — Service Request","desc":"Generellt kommando för special service requests.","example":"SRVGML","tags":["SSR","services"]},
+  {"cmd":"SM","title":"SM — Seat Map","desc":"Öppnar säteskarta (där tillgängligt).","example":"SM","tags":["SSR","seats"]},
+  {"cmd":"SRSEAT","title":"SR SEAT — Assign seat","desc":"Reservera specifikt säte.","example":"SRST 12A","tags":["SSR","seats"]},
+  {"cmd":"SRBAG","title":"SR BAG — Baggage","desc":"Lägg till extra bagage.","example":"SR XBAG-1PC","tags":["SSR","baggage"]},
+  {"cmd":"SRWCHR","title":"SR WCHR — Wheelchair","desc":"Rullstol (to/from gate).","example":"SRWCHR","tags":["SSR","special needs"]},
+  {"cmd":"SRWCHC","title":"SR WCHC — Wheelchair Cabin","desc":"Rullstol hela vägen till kabin.","example":"SRWCHC","tags":["SSR","special needs"]},
+  {"cmd":"SRMEDA","title":"SR MEDA — Medical case","desc":"Medicinsk assistans (Medical case).","example":"SRMEDA","tags":["SSR","special needs"]},
+  {"cmd":"SRUMNR","title":"SR UMNR — Unaccompanied minor","desc":"Boka ensamresande barn.","example":"SRUMNR05","tags":["SSR","UMNR"]},
+
+  // Meal codes (samtliga som i Amadeus standard)
+  {"cmd":"AVML","title":"AVML — Asian Vegetarian Meal","desc":"Vegetarisk indisk stil, ej kött/fisk/ägg.","example":"SRAVML","tags":["SSR","meal"]},
+  {"cmd":"BBML","title":"BBML — Baby Meal","desc":"Barnmat för spädbarn.","example":"SRBBML","tags":["SSR","meal"]},
+  {"cmd":"BLML","title":"BLML — Bland Meal","desc":"Mjuk, lättsmält mat (soft/bland).","example":"SRBLML","tags":["SSR","meal"]},
+  {"cmd":"CHML","title":"CHML — Child Meal","desc":"Anpassad för barn.","example":"SRCHML","tags":["SSR","meal"]},
+  {"cmd":"DBML","title":"DBML — Diabetic Meal","desc":"Diabetiker-anpassad måltid.","example":"SRDBML","tags":["SSR","meal"]},
+  {"cmd":"GFML","title":"GFML — Gluten-Free Meal","desc":"Fri från gluten.","example":"SRGFML","tags":["SSR","meal"]},
+  {"cmd":"HNML","title":"HNML — Hindu Meal (Non-veg)","desc":"Traditionell hinduisk, ej nötkött.","example":"SRHNML","tags":["SSR","meal"]},
+  {"cmd":"KSML","title":"KSML — Kosher Meal","desc":"Judisk kost (kosher).","example":"SRKSML","tags":["SSR","meal"]},
+  {"cmd":"LCML","title":"LCML — Low Calorie Meal","desc":"Kalorisnål kost.","example":"SRLCML","tags":["SSR","meal"]},
+  {"cmd":"LFML","title":"LFML — Low Fat Meal","desc":"Fettsnål kost.","example":"SRLFML","tags":["SSR","meal"]},
+  {"cmd":"LPML","title":"LPML — Low Protein Meal","desc":"Proteinreducerad kost.","example":"SRLPML","tags":["SSR","meal"]},
+  {"cmd":"LSML","title":"LSML — Low Salt Meal","desc":"Saltfattig kost.","example":"SRLSML","tags":["SSR","meal"]},
+  {"cmd":"MOML","title":"MOML — Muslim Meal","desc":"Halal-anpassad måltid.","example":"SRMOML","tags":["SSR","meal"]},
+  {"cmd":"NLML","title":"NLML — Non-Lactose Meal","desc":"Fri från laktos.","example":"SRNLML","tags":["SSR","meal"]},
+  {"cmd":"ORML","title":"ORML — Oriental Meal","desc":"Asiatisk-inspirerad kost.","example":"SRORML","tags":["SSR","meal"]},
+  {"cmd":"PRML","title":"PRML — Low Purin Meal","desc":"Lågpurinkost (t.ex. gikt).","example":"SRPRML","tags":["SSR","meal"]},
+  {"cmd":"RVML","title":"RVML — Raw Vegetarian","desc":"Endast råa vegetabilier.","example":"SRRVML","tags":["SSR","meal"]},
+  {"cmd":"SFML","title":"SFML — Seafood Meal","desc":"Fisk och skaldjur.","example":"SRSFML","tags":["SSR","meal"]},
+  {"cmd":"SPML","title":"SPML — Special Meal","desc":"Specialkost (specify).","example":"SRSPML-LOWCARB","tags":["SSR","meal"]},
+  {"cmd":"VGML","title":"VGML — Vegetarian Meal","desc":"Lakto-ovo vegetarisk.","example":"SRVGML","tags":["SSR","meal"]},
+  {"cmd":"VLML","title":"VLML — Lacto-ovo Veg","desc":"Vegetarisk inkl. ägg och mejeri.","example":"SRVLML","tags":["SSR","meal"]},
+  {"cmd":"VJML","title":"VJML — Jain Meal","desc":"Jain-vegetarisk (ingen rotfrukt).","example":"SRVJML","tags":["SSR","meal"]}
+];
+const DATA_ERRORS = [
+  // Availability & booking status codes
+  {"cmd":"HK","title":"HK — Holding Confirmed","desc":"Segmentet är bekräftat.","example":"HK1","tags":["status","segments"]},
+  {"cmd":"HL","title":"HL — Holding Waitlist","desc":"Segmentet ligger på väntelista.","example":"HL1","tags":["status","segments"]},
+  {"cmd":"HN","title":"HN — Holding Need","desc":"Begärd plats, väntar på svar.","example":"HN1","tags":["status","segments"]},
+  {"cmd":"NO","title":"NO — No action taken","desc":"Inget svar från carrier/system.","example":"NO1","tags":["status","segments"]},
+  {"cmd":"UC","title":"UC — Unable to Confirm","desc":"Ingen plats bekräftad, flight full/closed.","example":"UC1","tags":["status","segments"]},
+  {"cmd":"UN","title":"UN — Unable, flight not operating","desc":"Flighten är inställd / ej operativ.","example":"UN1","tags":["status","segments"]},
+  {"cmd":"US","title":"US — Unable, flight sold out","desc":"Segmentet är slutsålt.","example":"US1","tags":["status","segments"]},
+  {"cmd":"HX","title":"HX — Cancelled by airline","desc":"Segment annullerat av flygbolag.","example":"HX1","tags":["status","segments"]},
+  {"cmd":"TK","title":"TK — Time Change","desc":"Flighttid ändrad av airline (requires action).","example":"TK1","tags":["status","segments"]},
+
+  // PNR errors & warnings
+  {"cmd":"NHP","title":"NHP — Missing Name/Seats","desc":"Felmeddelande: saknas namn eller säten i PNR.","example":"NHP","tags":["error","PNR"]},
+  {"cmd":"NEED SEG SEL","title":"NEED SEG SEL","desc":"Systemet kräver att du väljer segmentnummer.","example":"FXQ → NEED SEG SEL","tags":["error","pricing"]},
+  {"cmd":"CHECK TST","title":"CHECK TST","desc":"Systemet flaggar att TST behöver granskas.","example":"TQT → CHECK TST","tags":["error","pricing"]},
+  {"cmd":"NEED NAME","title":"NEED NAME","desc":"PNR saknar namn, måste läggas in.","example":"NM1...","tags":["error","PNR"]},
+  {"cmd":"NEED FP","title":"NEED FP","desc":"PNR saknar form of payment.","example":"FP CASH","tags":["error","ticketing"]},
+
+  // System error messages
+  {"cmd":"INVALID FORMAT","title":"INVALID FORMAT","desc":"Fel syntax i kommandot.","example":"FP/123 → INVALID FORMAT","tags":["error","system"]},
+  {"cmd":"INVALID DATE","title":"INVALID DATE","desc":"Ogiltigt datum inskrivet.","example":"AN32FEB","tags":["error","system"]},
+  {"cmd":"SEGMENT ERROR","title":"SEGMENT ERROR","desc":"Fel i segmentinput, ofta saknas info.","example":"SS1A → SEGMENT ERROR","tags":["error","system"]},
+  {"cmd":"ENTRY NOT VALID","title":"ENTRY NOT VALID","desc":"Kommandot kan inte användas i detta läge.","example":"ER i fel steg","tags":["error","system"]},
+  {"cmd":"NEED TST","title":"NEED TST","desc":"TST krävs innan biljett kan utfärdas.","example":"TTP → NEED TST","tags":["error","ticketing"]},
+  {"cmd":"TST REQUIRED","title":"TST REQUIRED","desc":"Alias till NEED TST.","example":"TTP → TST REQUIRED","tags":["error","ticketing"]},
+
+  // Misc airline/airport messages
+  {"cmd":"AUTH FAIL","title":"AUTH FAIL","desc":"Autorisering misslyckades (t.ex. vid FP).","example":"FP DC... → AUTH FAIL","tags":["error","payment"]},
+  {"cmd":"NEED AUTH","title":"NEED AUTH","desc":"Kräver authorisation code.","example":"FP AX.../A12345","tags":["error","payment"]},
+  {"cmd":"DUPLICATE SEGMENT","title":"DUPLICATE SEGMENT","desc":"Samma flight/klass redan bokad.","example":"SS1Y1 → DUPLICATE SEGMENT","tags":["error","PNR"]}
+];
+const DATA_QUEUE = [
+  {"cmd":"QD","title":"QD — Queue Display/Counts","desc":"Visar vilka köer som har PNR och hur många i varje. Används för att få överblick innan du går in i en specifik kö.","example":"QD 95C1  (t.ex. Office 95, Category 1)","tags":["queues","overview"]},
+
+  {"cmd":"QD Cx","title":"QD Cx — Display Category x","desc":"Visar antal PNR i en specifik kategori (x) för vald office/queue.","example":"QD 95C14  (Category 14)","tags":["queues","overview"]},
+
+  {"cmd":"QN","title":"QN — Queue Next (retrieve)","desc":"Hämtar nästa PNR i den kö du står i. Kör QN upprepat för att bläddra igenom alla poster.","example":"QN","tags":["queues","work"]},
+
+  {"cmd":"QE","title":"QE — End Queue","desc":"Avslutar köhantering och lämnar kön (tillbaka till normal vy).","example":"QE","tags":["queues","work"]},
+
+  {"cmd":"QR","title":"QR — Remove from Queue","desc":"Tar bort aktuell PNR från kön när du är klar med den. Använd efter att du gjort dina åtgärder och sparat (ER).","example":"ER → QR","tags":["queues","action"]},
+
+  {"cmd":"QP","title":"QP — Place PNR on Queue","desc":"Lägger aktiv PNR i en viss kökategori (manuell parkering eller handover).","example":"QP/14  (placera på Category 14)","tags":["queues","action"]},
+
+  {"cmd":"QP /Office/Category","title":"QP — Specify office/category","desc":"Placera PNR i annans office eller specifik kategori. Används för arbetsfördelning mellan kontor/teams.","example":"QP/95C14","tags":["queues","action"]},
+
+  {"cmd":"QN + QR","title":"QN + QR — Bearbeta kö","desc":"Standardmönster: hämta nästa PNR (QN), gör åtgärder (t.ex. FXP/TTP), spara (ER) och ta bort från kön (QR).","example":"QN → (åtgärd) → ER → QR → QN","tags":["queues","flow"]},
+
+  {"cmd":"Queue Tips","title":"Queue Best Practice","desc":"Sätt en intern rutin per kategori: vad ska göras innan QR? (t.ex. kontrollera TST/TKT, skicka itinerary, uppdatera RM/RIR).","example":"K14: schemaändring → kontakta kund → uppdatera remark → ER → QR","tags":["queues","practice"]},
+
+  {"cmd":"QUEUE FLOW","title":"Queue Flow (overview)","desc":"Översikt: QD (översikt) → QD Cx (välj kategori) → QN (in i PNR) → åtgärd → ER → QR → QN … → QE när klart.","example":"QD → QD C14 → QN → (fix) → ER → QR → QN → … → QE","tags":["queues","flow"]}
+];
+const DATA_ETICKET = [
+  {"cmd":"TWD","title":"TWD — Display e-ticket","desc":"Visar e-biljett för vald passagerare. Default visar senaste utfärdade biljett i PNR.","example":"TWD","tags":["eticket","display"]},
+
+  {"cmd":"TWD/TKT","title":"TWD/TKT — Display by ticket nbr","desc":"Visar e-biljett baserat på fullständigt biljett-/dokumentnummer.","example":"TWD/TKT 117-1234567890","tags":["eticket","display"]},
+
+  {"cmd":"TWD/Lx","title":"TWD/Lx — Display coupon line","desc":"Visar en specifik kupongrad i biljetten.","example":"TWD/L2","tags":["eticket","coupon"]},
+
+  {"cmd":"TWD/EMD","title":"TWD/EMD — Display EMD","desc":"Visar EMD (Electronic Misc Document) kopplad till PNR, t.ex. för bagage eller serviceavgifter.","example":"TWD/EMD 117-9988776655","tags":["EMD","display"]},
+
+  {"cmd":"TWD/TSM","title":"TWD/TSM — Display TSM","desc":"Visar TSM (Transitional Stored Misc doc) innan utfärdande.","example":"TWD/TSM1","tags":["EMD","TSM"]},
+
+  {"cmd":"TWP","title":"TWP — Print e-ticket/EMD","desc":"Skapar utskrift eller PDF av e-ticket/EMD. Kräver ofta skrivarkod eller elektronisk routing.","example":"TWP/TKT","tags":["eticket","print"]},
+
+  {"cmd":"TJQ","title":"TJQ — Query agent coupons","desc":"Rapport: listar biljetter utfärdade av specifik agent (sales report).","example":"TJQ/SU","tags":["eticket","report"]},
+
+  {"cmd":"TJR","title":"TJR — Query office coupons","desc":"Rapport: listar biljetter/EMD per office (office report).","example":"TJR","tags":["eticket","report"]},
+
+  {"cmd":"Revalidate vs Reissue","title":"Revalidate vs Reissue","desc":"TWD → kontrollera kupongstatus. Revalidate (TTP/ETRV) används vid tidändringar utan fare skillnad. Reissue (FXI/FXQ) används vid fare skillnad eller routing change.","example":"TWD/Lx → (check status) → TTP/ETRV eller FXQ/FXI","tags":["eticket","revalidation"]}
+];
+const DATA_OSI_SSR = [
+  {"cmd":"OS","title":"OS — Other Service Information","desc":"Fri text till flygbolag. Ingen strukturerad validering. Bra för info som inte kräver action.","example":"OS SK PLEASE NOTE PAX BIRTHDAY 15MAY","tags":["OSI","airlines","info"]},
+  {"cmd":"SR","title":"SR — Special Service Request","desc":"Strukturerad begäran (måltid, säte, bagage, assistans). Kräver korrekt kod och format.","example":"SR AVML  |  SR WCHR","tags":["SSR","services"]},
+  {"cmd":"OS vs SR","title":"OS vs SR — När använder du vad?","desc":"SR när bolaget ska ‘göra’ något (systemläser koden). OS när du bara vill informera (fri text).","example":"Behov av rullstol = SR WCHR. Info ‘kund fyller år’ = OS.","tags":["guide","best practice"]},
+  {"cmd":"CTCM/CTCE","title":"SR CTCM/CTCE — Kontakt via SSR","desc":"Skicka tel/e-post till airline via SSR (kräver rätt format).","example":"SR CTCM-00467…  |  SR CTCE-namn//mail.se","tags":["SSR","contacts"]},
+  {"cmd":"OS-carrier","title":"OS XX — OSI till specifikt bolag","desc":"Rikta OSI till visst flygbolag med deras kod.","example":"OS SK PAX WILL CHECK IN LATE","tags":["OSI","airlines"]}
+];
+const DATA_HOTELS = [
+  {"cmd":"HHL","title":"HHL — Hotel List","desc":"Hotell-tillgänglighet i vald ort och datum.","example":"HHL STO 15MAY-17MAY /RT-DBL /PR-100-200","tags":["hotel","availability"]},
+  {"cmd":"HBD","title":"HBD — Hotel Details","desc":"Detaljer för valt hotell från listan.","example":"HBD 3","tags":["hotel","details"]},
+  {"cmd":"HHR","title":"HHR — Hotel Rates","desc":"Visar rate/rumstyp för valt hotell.","example":"HHR 3","tags":["hotel","rates"]},
+  {"cmd":"HHE","title":"HHE — Hotel Entry (sell)","desc":"Boka rum (efter HHR/HBD).","example":"HHE 3/D1","tags":["hotel","sell"]},
+  {"cmd":"HB-filter","title":"HB filter — Datum/ort/filter","desc":"Kombinera datum, antal nätter, prisintervall, kedja, område.","example":"HHL ARN 12JUN-2NT /PR-800-1400 /CH-SH (Scandic)","tags":["hotel","filters"]},
+  {"cmd":"Hotel flow","title":"Hotel — flow","desc":"HHL (lista) → HBD (detalj) → HHR (rate) → HHE (sell) → ER.","example":"HHL → HBD 2 → HHR 2 → HHE 2/D1 → ER","tags":["hotel","flow"]}
+];
+const DATA_CAR = [
+  {"cmd":"CAC","title":"CAC — Car Availability","desc":"Hyrbilstillgänglighet (datum, ort, tid).","example":"CAC ARN 15MAY/0900-17MAY/1700 /CT-ECMN","tags":["car","availability"]},
+  {"cmd":"CAR","title":"CAR — Car Rates","desc":"Rate-display för vald bilklass/leverantör.","example":"CAR 2","tags":["car","rates"]},
+  {"cmd":"CAI","title":"CAI — Car Information","desc":"Villkor, inkluderat, mileage, depåkrav.","example":"CAI 2","tags":["car","info"]},
+  {"cmd":"CS","title":"CS — Car Sell","desc":"Boka hyrbil (efter CAC/CAR).","example":"CS 2","tags":["car","sell"]},
+  {"cmd":"Car flow","title":"Car — flow","desc":"CAC (lista) → CAI (villkor) → CAR (rate) → CS (sell) → ER.","example":"CAC → CAI 2 → CAR 2 → CS 2 → ER","tags":["car","flow"]}
+];
+const DATA_DIAG = [
+  {"cmd":"RH","title":"RH — Record History","desc":"Visar PNR-historik: vem gjorde vad, när.","example":"RH","tags":["diagnostic","history"]},
+  {"cmd":"MD","title":"MD — More Data","desc":"Bläddra nedåt i långa visningar (fortsättning).","example":"MD","tags":["diagnostic","navigation"]},
+  {"cmd":"PE","title":"PE — Print/Itinerary","desc":"Utskrifts-/itinerary-läge (format beroende på setup).","example":"PE","tags":["diagnostic","print"]},
+  {"cmd":"DO","title":"DO — Flight/Itin Info","desc":"Fakta om flight/PNR-färdplan, snabbt för koll.","example":"DO","tags":["diagnostic","reference"]}
+];
+const DATA_DOCS = [
+  {"cmd":"TWD","title":"TWD — Visa e-ticket","desc":"Snabb åtkomst till e-biljett i PNR.","example":"TWD","tags":["docs","eticket"]},
+  {"cmd":"TWP","title":"TWP — Print ticket/EMD","desc":"Utskrift/PDF av TKT/EMD beroende på setup.","example":"TWP/TKT","tags":["docs","print"]},
+  {"cmd":"TJQ","title":"TJQ — Agent sales report","desc":"Lista kuponger utfärdade av agent.","example":"TJQ/SU","tags":["docs","report"]},
+  {"cmd":"TJR","title":"TJR — Office sales report","desc":"Lista kuponger per office.","example":"TJR","tags":["docs","report"]},
+  {"cmd":"TWD/EMD","title":"TWD/EMD — Visa EMD","desc":"Se EMD-kuponger och status.","example":"TWD/EMD 117-9988776655","tags":["docs","EMD"]}
+];
+const DATA_FLOWS = [
+  {"cmd":"Flow: Ny PNR","title":"Ny PNR — Checklista","desc":"Varför varje steg? AN (utbud) → SS (sälja) → NM (namn) → AP* (kontakt) → SR CTCM/CTCE (till airline) → TKTL (deadline) → ER (spara). Fallgropar: glömt namn (NEED NAME), ingen FP innan TTP, fel SSR-format.","example":"AN → SS → NM → APM/APE → SR CTCM/CTCE → TKTL → ER","tags":["flow","PNR"]},
+
+  {"cmd":"Flow: Pricing-beslut","title":"Pricing — Beslutsträd","desc":"FXP (behåll bokad klass), FXB (auto-lägst, kan rebooka), FXA (utforska). Läs FQN/PEN innan du lovar omboknings-/refundregler. /SBF när bagage ska ingå.","example":"FXP vs FXB vs FXA; + /SBF när nödvändigt","tags":["flow","pricing"]},
+
+  {"cmd":"Flow: Voluntary change","title":"Voluntary change (FXQ/FXF)","desc":"Välj segment (Sx,x), bygg ny TST, kontrollera TQM/EMD om skillnader, issue (TTP/Tx) och EMD (TTM/Mx).","example":"FXQ /S2,3 /R,UP → TQT → TQM → TTP/T2 → TTM/M1","tags":["flow","reissue"]},
+
+  {"cmd":"Flow: Schedule change","title":"Schedule change — Revalidate vs Reissue","desc":"Revalidate när endast tid ändrats och fare/routing är oförändrad (TTP/ETRV). Reissue (FXI/FXQ) när fare diff, routing byte eller kupongstatus kräver det.","example":"TWD/Lx → status ok? → TTP/ETRV annars FXI/FXQ","tags":["flow","irrops"]}
+];
+const DATA_TROUBLESHOOT = [
+  {"cmd":"UC/US/UN","title":"UC/US/UN — Ingen plats/ej operativ","desc":"Byt klass (/KW+), vidga carriers (/ABA), eller ändra rutt (exkludera nav med /XCPH).","example":"AN … /KW+  |  AN … /ABA,SK,SN  |  AN … /XCPH","tags":["troubleshoot","availability"]},
+  {"cmd":"NEED SEG SEL","title":"NEED SEG SEL — Välj segment","desc":"Specificera segment i kommandot.","example":"FXQ /S2  |  FXQ /S2,3","tags":["troubleshoot","pricing"]},
+  {"cmd":"CHECK/NEED TST","title":"CHECK/NEED TST — TST saknas/fel","desc":"Visa TST (TQT), uppdatera (FXU) eller radera linje (TTE/Lx) och prissätt om (FXP) innan TTP.","example":"TQT → FXU 3  |  TTE/L2 → FXP","tags":["troubleshoot","ticketing"]},
+  {"cmd":"AUTH FAIL/NEED AUTH","title":"AUTH FAIL/NEED AUTH — Betalning","desc":"FP med korrekt korttyp och giltighet, ev. auktorisationskod. Fallback: FP CASH/INV.","example":"FP VI.../1225 (/A12345)  |  FP CASH","tags":["troubleshoot","payment"]}
+];
+const DATA_GOTCHAS = [
+  {"cmd":"CTCM/CTCE-format","title":"Kontaktformat (SE)","desc":"CTCM med landskod 0046… CTCE med dubbla snedstreck före domän.","example":"SRCTCM-00467XXXXXXXX  |  SRCTCE-NAMN//MAIL.SE","tags":["best practice","contacts"]},
+  {"cmd":"Offers vs FXP","title":"Offers eller ren FXP/ER?","desc":"Offers (OFS/OFV/OFK) är bra vid rådgivning/urval. Ren FXP/ER är snabbast/robust i enkla ärenden.","example":"FXX → FXT n → OFS/OFV/OFK vs FXP → ER","tags":["best practice","offers"]},
+  {"cmd":"Remark-policy","title":"RC vs RIR","desc":"RC för internt (konfidentiellt), RIR för kundsynligt itinerary-meddelande.","example":"RC INTERNAL; RIR Contact gate on arrival","tags":["best practice","remarks"]},
+  {"cmd":"UMNR-policy","title":"UMNR — Läs airline-regler","desc":"Kolla GGAIR XX MINOR innan SR UMNR; åldersgränser och avgifter skiljer sig.","example":"GGAIR SK MINOR → SRUMNR05","tags":["best practice","UMNR"]}
+];
+const DATA = [
+  ...DATA_PNR,
+  ...DATA_AVAIL,
+  ...DATA_PRICING,
+  ...DATA_OFFERS,
+  ...DATA_TICKETING,
+  ...DATA_SSR,
+  ...DATA_ERRORS,
+  ...DATA_QUEUE,
+  ...DATA_ETICKET,
+  ...DATA_OSI_SSR,
+  ...DATA_HOTELS,
+  ...DATA_CAR,
+  ...DATA_DIAG,
+  ...DATA_DOCS,
+  ...DATA_FLOWS,
+  ...DATA_TROUBLESHOOT,
+  ...DATA_GOTCHAS
+];
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const search = $('#search');
+    const list = $('#list');
+    const empty = $('#empty');
+    const tpl = $('#cardTpl');
+    const tagSelect = $('#tagSelect');
+    const chips = $('#chips');
+    const sort = $('#sort');
+
+    const allTags = Array.from(new Set(DATA.flatMap(x => x.tags))).sort((a,b)=>a.localeCompare(b,'sv'));
+    allTags.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t; opt.textContent = t;
+      tagSelect.appendChild(opt);
+
+      const chip = document.createElement('button');
+      chip.className = 'chip'; chip.textContent = t; chip.dataset.tag = t;
+      chip.addEventListener('click', () => {
+        if (chip.classList.contains('active')) {
+          chip.classList.remove('active');
+          render();
+        } else {
+          $$('.chip.active').forEach(c=>c.classList.remove('active'));
+          chip.classList.add('active');
+          tagSelect.value = t;
+          render();
+        }
+      });
+      chips.appendChild(chip);
+    });
+
+    function render(){
+      const q = (search.value||'').toLowerCase().trim();
+      const tag = tagSelect.value;
+      const activeChip = $('.chip.active');
+      const chipTag = activeChip ? activeChip.dataset.tag : null;
+
+      let items = DATA.slice();
+
+      const theTag = chipTag || (tag !== 'all' ? tag : null);
+      if (theTag) items = items.filter(it => (it.tags||[]).includes(theTag));
+
+      if (q){
+        items = items.filter(it => {
+          const hay = [
+            it.cmd, it.title, it.desc, it.example, ...(it.tags||[])
+          ].join(' ').toLowerCase();
+          return hay.includes(q);
+        });
+      }
+
+      const mode = sort.value;
+      if (mode === 'cmd-asc') items.sort((a,b)=>a.cmd.localeCompare(b.cmd,'sv'));
+      else if (mode === 'cmd-desc') items.sort((a,b)=>b.cmd.localeCompare(a.cmd,'sv'));
+      else if (mode === 'group') items.sort((a,b)=>(a.tags[0]||'').localeCompare((b.tags[0]||''),'sv') || a.cmd.localeCompare(b.cmd,'sv'));
+
+      list.innerHTML = '';
+      if (!items.length){ empty.hidden = false; return; }
+      empty.hidden = true;
+
+      for (const s of items){
+        const node = tpl.content.cloneNode(true);
+        node.querySelector('.k').textContent = s.title || s.cmd;
+        node.querySelector('.meta').textContent = s.cmd;
+const btn = node.querySelector('.copybtn');
+btn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(s.cmd);
+    btn.textContent = "Kopierat!";
+    setTimeout(()=> btn.textContent = "Kopiera", 1200);
+  } catch {
+    btn.textContent = "Kunde inte kopiera";
+    setTimeout(()=> btn.textContent = "Kopiera", 1200);
+  }
+});
+        node.querySelector('.blurb').textContent = s.desc || '';
+        const ex = node.querySelector('.example');
+        if (s.example){ ex.textContent = s.example; ex.hidden = false; }
+        const tags = node.querySelector('.taglist');
+        (s.tags||[]).forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'tag'; span.textContent = t;
+          tags.appendChild(span);
+        });
+        list.appendChild(node);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+        e.preventDefault(); search.focus();
+      }
+    });
+
+    search.addEventListener('input', render);
+    tagSelect.addEventListener('change', () => {
+      $$('.chip.active').forEach(c=>c.classList.remove('active'));
+      render();
+    });
+    sort.addEventListener('change', render);
+
+    render();
+    // === Globala toggles ===
+
+// Ljus/Mörk
+document.getElementById('theme')?.addEventListener('click', () => {
+  document.documentElement.classList.toggle('light');
+});
+
+// Kompakt / Luftig vy
+document.getElementById('density')?.addEventListener('click', () => {
+  document.body.classList.toggle('compact');
+  const btn = document.getElementById('density');
+  btn.textContent = document.body.classList.contains('compact') 
+    ? "Luftig vy" 
+    : "Kompakt vy";
+});
+  </script>
+</body>
+</html>
