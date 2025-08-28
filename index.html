@@ -818,6 +818,26 @@ document.addEventListener('keydown', e=>{
     el.focus(); el.select();
   }
 });
+    // === Globala toggles ===
+const html = document.documentElement;
+const themeBtn = document.getElementById('theme');
+const densityBtn = document.getElementById('density');
+const focusBtn = document.getElementById('focus');
+
+// Toggle ljus/mörk
+themeBtn?.addEventListener('click', () => {
+  html.classList.toggle('light');
+});
+
+// Toggle kompakt vy
+densityBtn?.addEventListener('click', () => {
+  document.body.classList.toggle('compact');
+});
+
+// Fokusera sökfält
+focusBtn?.addEventListener('click', () => {
+  document.getElementById('search')?.focus();
+});
   </script>
 </body>
 </html>
