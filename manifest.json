@@ -1,13 +1,13 @@
 {
-  "name": "Amadeus Kommandon & Snabbindex",
+  "name": "Amadeus Command Index",
   "short_name": "Amadeus",
-  {
+  "description": "Snabbindex för Amadeus-kommandon.",
   "start_url": "./index.html",
   "scope": "./",
-  "display": "standalone"
-}
-  "background_color": "#ffffff",
-  "theme_color": "#1a73e8",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "192.png",
@@ -23,6 +23,24 @@
       "src": "1024.png",
       "sizes": "1024x1024",
       "type": "image/png"
+    },
+    {
+      "src": "Maskable_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "Maskable_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "Maskable_1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
