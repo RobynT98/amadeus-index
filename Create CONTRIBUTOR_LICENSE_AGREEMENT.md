@@ -1,6 +1,6 @@
 # Contributor License Agreement (CLA)
 
-Tack för att du vill bidra till **Queer Journal**!  
+Tack för att du vill bidra till **Amadeus Index**!  
 För att vi ska kunna acceptera ditt bidrag behöver du godkänna villkoren nedan.
 
 ## 1. Äganderätt
