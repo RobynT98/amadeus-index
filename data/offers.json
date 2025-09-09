@@ -1,0 +1,8 @@
+[
+  {"cmd":"OFS","title":"OFS — Store offer","desc":"Lagrar en vald fare som ett offer i PNR.","example":"OFS","tags":["offers","pricing"],"category":"Offers"},
+  {"cmd":"OFV","title":"OFV — Verify seats","desc":"Verifierar säten för lagrat offer.","example":"OFV1","tags":["offers","pricing"],"category":"Offers"},
+  {"cmd":"OFK","title":"OFK — Confirm offer","desc":"Bekräftar ett offer och bokar in.","example":"OFK1","tags":["offers","pricing"],"category":"Offers"},
+  {"cmd":"OFVX","title":"OFVX — Verify alt offer","desc":"Verifierar alternativ offer (extended).","example":"OFVX2","tags":["offers","pricing"],"category":"Offers"},
+  {"cmd":"RTOF","title":"RTOF — Return to offers","desc":"Återvänder till listan av offers.","example":"RTOF","tags":["offers","navigation"],"category":"Offers"},
+  {"cmd":"OFFER FLOW","title":"Offer Flow (overview)","desc":"Fullt flöde: FXX → FXT → OFS → OFV → OFK → ER.","example":"FXX/R,UP → FXT1 → OFS → OFV1 → OFK1 → ER","tags":["offers","pricing"],"category":"Offers"}
+]
