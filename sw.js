@@ -1,20 +1,24 @@
-// --- Amadeus PWA Service Worker ---
-const VERSION = "amadeus-v1.0.1";
-const CACHE_STATIC  = `static-${VERSION}`;
-const CACHE_DYNAMIC = `dynamic-${VERSION}`;
-const DYNAMIC_MAX   = 80; // trimma efter behov
-
+const VERSION = 'v3'; // bumpa vid ändringar
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./192.png", "./512.png", "./1024.png",
-  // lägg till nya filer här:
-  // "./styles.css",
-  // "./app.js",
-  // "./commands.json",
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.json',
+  './192.png',
+  './512.png',
+  './1024.png',
+  './Maskable_192.png',
+  './Maskable_512.png',
+  './Maskable_1024.png',
+  './data/pnr.json',
+  './data/availability.json',
+  './data/pricing.json',
+  './data/offers.json',
+  './data/ticketing.json',
+  './data/ssr.json',
+  './data/errors.json'
 ];
-
 // Hjälpare: trimma dynamiska cachen
 async function trimCache(name, max) {
   const cache = await caches.open(name);
