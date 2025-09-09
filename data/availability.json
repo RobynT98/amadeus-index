@@ -1,0 +1,21 @@
+[
+  {"cmd":"AN","title":"AN — Availability (All times)","desc":"Visa alla avgångar en viss dag.","example":"AN15MAYSTOLLA/ASK","tags":["availability","search"],"category":"Availability"},
+  {"cmd":"AE","title":"AE — Availability (Shortest time)","desc":"Visa avgångar med kortast flygtid.","example":"AE15MAYSTOLLA/ASK","tags":["availability","search"],"category":"Availability"},
+  {"cmd":"SN","title":"SN — Availability by carrier","desc":"Visa avgångar med valt flygbolag.","example":"SN SK","tags":["availability","carrier"],"category":"Availability"},
+  {"cmd":"TN","title":"TN — Timetable","desc":"Visar tidtabell för flight.","example":"TN15MAYSTOLLA","tags":["availability","timetable"],"category":"Availability"},
+
+  {"cmd":"/ABA","title":"/ABA — Include airline(s)","desc":"Filtrera på max 6 flygbolag.","example":"AN21MAYSTOLON/ABA,SK","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/ASK","title":"/ASK — Operating airline only","desc":"Visa endast opererande flygbolag.","example":"AN21MAYSTOLON/ASK","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/ASU","title":"/ASU — Exclude airline","desc":"Uteslut visst flygbolag.","example":"AN21MAYSTOLON/ASU","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/CH","title":"/CH — Booking class filter","desc":"Filtrera på specifika bokningsklasser (RBD).","example":"AN21MAYSTOLON/CHY,B","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/KX","title":"/KX — Cabin filter","desc":"Filtrera på kabinklass (F,C,Y,W,M).","example":"AN21MAYSTOLON/KC","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/KW+","title":"/KW+ — Alternative classes","desc":"Visa andra klasser om vald saknas.","example":"AN21MAYSTOLON/KW+","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/FN","title":"/FN — Nonstop only","desc":"Visa endast direktflyg.","example":"AN21MAYSTOLON/FN","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/FD","title":"/FD — Nonstop only (alias)","desc":"Samma som /FN.","example":"AN21MAYSTOLON/FD","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/BX","title":"/BX — Seats required","desc":"Ange antal säten som krävs.","example":"AN21MAYSTOLON/B2","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/XCPH","title":"/XCPH — Exclude via city","desc":"Uteslut anslutning via viss stad.","example":"AN21MAYSTOLON/XCPH","tags":["availability","filter"],"category":"Availability"},
+  {"cmd":"/IO","title":"/IO — Same airline only","desc":"Samtliga segment på samma flygbolag.","example":"AN21MAYSTOLON/IO","tags":["availability","filter"],"category":"Availability"},
+
+  {"cmd":"ACR","title":"ACR — Change availability date","desc":"Ändra visning till annat datum/tid.","example":"ACR12MAY1900","tags":["availability","navigation"],"category":"Availability"},
+  {"cmd":"ACR+/-","title":"ACR+/- offset","desc":"Flytta visning X dagar framåt/bakåt.","example":"ACR3 (tre dagar senare)","tags":["availability","navigation"],"category":"Availability"}
+]
