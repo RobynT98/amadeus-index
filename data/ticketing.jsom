@@ -1,0 +1,20 @@
+[
+  {"cmd":"FP","title":"FP — Form of Payment","desc":"Ange betalningssätt för biljettering.","example":"FP CASH","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"FP CC","title":"FP — Credit Card","desc":"Kreditkort som betalning, inkl. typ + nummer.","example":"FP VI4444333322221111/1219","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"FP INV","title":"FP — Invoice","desc":"Fakturabetalning.","example":"FP INV12345","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"FPNONREF","title":"FP NONREF","desc":"Betalning utan återbetalning.","example":"FPNONREF","tags":["ticketing","payment"],"category":"Ticketing"},
+
+  {"cmd":"AX","title":"AX — American Express","desc":"Kreditkortskod för AmEx.","example":"FP 444433332222/1225","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"VI","title":"VI — Visa","desc":"Kreditkortskod för Visa.","example":"FP VI4444333322221111/1225","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"CA","title":"CA — Mastercard","desc":"Kreditkortskod för Mastercard (CA).","example":"FP CA5105105105105100/1225","tags":["ticketing","payment"],"category":"Ticketing"},
+  {"cmd":"DC","title":"DC — Diners Club","desc":"Kreditkortskod för Diners Club.","example":"FP DC30000000000004/1225","tags":["ticketing","payment"],"category":"Ticketing"},
+
+  {"cmd":"TTP","title":"TTP — Ticketing (issue)","desc":"Validera och utfärda e-biljett.","example":"TTP","tags":["ticketing","issue"],"category":"Ticketing"},
+  {"cmd":"TTP/RT","title":"TTP/RT — Issue & retrieve","desc":"Utfärdar biljett och hämtar PNR direkt.","example":"TTP/RT","tags":["ticketing","issue"],"category":"Ticketing"},
+  {"cmd":"TKT","title":"TKT — Alternative entry","desc":"Alias till TTP.","example":"TKT","tags":["ticketing","issue"],"category":"Ticketing"},
+
+  {"cmd":"FXG/ALL","title":"FXG/ALL — Price ancillaries","desc":"Prissättning av tilläggstjänster (EMD).","example":"FXG/ALL","tags":["EMD","ancillary"],"category":"Ticketing"},
+  {"cmd":"TQM","title":"TQM — TSM display","desc":"Visar detaljer för TSM (ancillary pricing).","example":"TQM","tags":["EMD","TSM"],"category":"Ticketing"},
+  {"cmd":"TMI","title":"TMI — Modify TSM","desc":"Ändra TSM (t.ex. betalning).","example":"TMI/FP-CASH","tags":["EMD","TSM"],"category":"Ticketing"},
+  {"cmd":"TTM","title":"TTM — Issue EMD","desc":"Utfärdar EMD (Electronic Misc Document).","example":"TTM","tags":["EMD","issue"],"category":"Ticketing"}
+]
