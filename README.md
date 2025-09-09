@@ -1,39 +1,69 @@
-# amadeus-index
 # Amadeus Command Index
 
-En snabb och interaktiv indexsida över vanliga **Amadeus-kommandon**, uppdelade i moduler (PNR, Availability, Pricing, Offers, Ticketing, SSR, Queues, E-ticket/EMD, m.fl.).
+En snabb och interaktiv indexsida över vanliga **Amadeus-kommandon**, uppdelade i moduler (PNR, Availability, Pricing, Offers, Ticketing, SSR, m.fl.).
 
 ## ✨ Funktioner
-- **Sök**: filtrera på kommando, taggar eller beskrivning.  
-- **Moduler**: kommandon grupperade efter funktion.  
-- **Kopiera-knapp**: kopiera kommando direkt till urklipp.  
-- **Tema**: växla mellan ljus och mörk layout.  
-- **Vy**: växla mellan kompakt och luftig vy.
+- **Sök** – filtrera på kommando, taggar eller beskrivning  
+- **Moduler** – kommandon grupperade efter funktion  
+- **Kopiera** – kopiera kommando till urklipp med ett klick  
+- **Tema** – växla mellan ljust/mörkt  
+- **Vy** – kompakt eller luftig kortlayout  
+- **PWA** – fungerar offline och kan installeras som app
 
-## 🚀 Användning
-1. Öppna [https://robynt98.github.io/amadeus-index/) ).*  
-2. Sök efter kommando eller bläddra i modulerna.  
-3. Klicka **Kopiera** för att snabbt använda kommandot i Amadeus.  
+## 🚀 Live
+- GitHub Pages: https://robynt98.github.io/amadeus-index/
+- Vercel: https://amadeus-index.vercel.app/
 
-## 📦 Installation (valfritt)
-Vill du köra lokalt:
+## 🧭 Användning
+1. Öppna någon av länkarna ovan  
+2. Sök efter ett kommando eller bläddra i modulerna  
+3. Klicka **Kopiera** för att snabbt använda kommandot i Amadeus
+
+## 💻 Köra lokalt
 ```bash
-git clone https://github.com/DITT-NAMN/amadeus-index.git
+git clone https://github.com/RobynT98/amadeus-index.git
 cd amadeus-index
-open index.html
+# öppna index.html i din webbläsare (dubbeklick eller via server)
+```
+Tips: om du vill testa service workern korrekt, kör en liten dev-server:
+```
+npx serve .
+# eller
+python -m http.server 8080
+```
+## 📲 PWA (offline)
+Appen cachear UI + datafiler via sw.js. När du uppdaterar filer, bumpa VERSION i sw.js för att trigga ny cache.
+Installera som app:
+Desktop: klicka Installera app i adressfältet (Chrome/Edge)
+Android: Lägg till på startskärmen när prompten visas.
 
+## 🗂 Struktur
+```
+amadeus-index/
+├─ data/                 # JSON med kommandodata
+├─ 192.png 512.png 1024.png  # app-ikoner
+├─ Maskable_*.png
+├─ index.html
+├─ styles.css
+├─ app.js
+├─ manifest.json
+└─ sw.js                 # service worker
 ```
 
+## 📦 Deployment
+### GitHub Pages
+
+Settings → Pages → Source: Deploy from a branch, Branch: main
+Vänta på bygget, sidan blir tillgänglig på https://<user>.github.io/amadeus-index/
+### Vercel
+Importera repo i Vercel
+Framework: Other (statisk sida), Build/Output dir: /
+
 ## 📜 Licens & bidrag
+Projektet är släppt under MIT License.
+Bidrag: Genom att bidra godkänner du vår Contributor License Agreement (CLA).
+Det innebär att projektägaren Conri Turesson kan:
+ändra licens för framtida versioner,
+skapa premium/kommersiella varianter.
+Ditt bidrag till den öppna versionen förblir MIT-licensierat.
 
-Detta projekt är släppt under [MIT License](LICENSE) för den öppna versionen.  
-Det betyder att du fritt kan använda, ändra och sprida appen så länge du anger originalet.
-
-⚠️ **Viktigt för bidragsgivare:**  
-Genom att bidra till projektet accepterar du vår [Contributor License Agreement (CLA)](CONTRIBUTOR_LICENSE_AGREEMENT.md).  
-Det innebär att projektägaren **Conri Turesson** har rätt att i framtiden:
-
-- ändra licens för nya versioner,
-- skapa premium- eller kommersiella varianter av appen.
-
-Ditt bidrag till den öppna versionen kommer alltid att förbli MIT-licensierat.
