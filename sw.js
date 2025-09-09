@@ -1,87 +1,123 @@
 // --- Amadeus PWA Service Worker ---
-// Bumpa version när du ändrar filer så att nya caches triggas
-const VERSION = "amadeus-v1.0.0";
+const VERSION = "amadeus-v1.0.1";
 const CACHE_STATIC  = `static-${VERSION}`;
 const CACHE_DYNAMIC = `dynamic-${VERSION}`;
+const DYNAMIC_MAX   = 80; // trimma efter behov
 
-// App-skalet (lägg till fler filer här om du bryter ut CSS/JS)
 const ASSETS = [
-  "./",               // viktigt på GitHub Pages
+  "./",
   "./index.html",
   "./manifest.json",
-  "./192.png",
-  "./512.png",
-  "./1024.png",
-  // "./Maskable_192.png",
-  // "./Maskable_512.png",
-  // "./Maskable_1024.png",
+  "./192.png", "./512.png", "./1024.png",
+  // lägg till nya filer här:
+  // "./styles.css",
+  // "./app.js",
+  // "./commands.json",
 ];
 
-// Install: lägg allt i statiska cachen
+// Hjälpare: trimma dynamiska cachen
+async function trimCache(name, max) {
+  const cache = await caches.open(name);
+  const keys = await cache.keys();
+  if (keys.length <= max) return;
+  // ta äldsta först
+  await cache.delete(keys[0]);
+  return trimCache(name, max);
+}
+
+// Installation
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_STATIC).then((cache) => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_STATIC).then((c) => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-// Activate: städa bort gamla caches
+// Aktivering
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== CACHE_STATIC && k !== CACHE_DYNAMIC)
-          .map((k) => caches.delete(k))
-      )
-    )
-  );
+  event.waitUntil((async () => {
+    // Navigation preload för snabbare first-load
+    if ("navigationPreload" in self.registration) {
+      try { await self.registration.navigationPreload.enable(); } catch {}
+    }
+    const keys = await caches.keys();
+    await Promise.all(
+      keys.filter(k => k !== CACHE_STATIC && k !== CACHE_DYNAMIC)
+          .map(k => caches.delete(k))
+    );
+  })());
   self.clients.claim();
 });
 
-// Fetch: offline-stöd + smart cache-strategi
+// Fixa normaliserad nyckel (ignorera query för statiska)
+// och lek snäll med GitHub Pages/Vercel paths
+function normalizedRequest(req) {
+  try {
+    const url = new URL(req.url);
+    // Ignorera söksträng för lokala statiska tillgångar
+    const isLocal = url.origin === self.location.origin;
+    if (isLocal) {
+      // matcha mot exakt sökväg utan query (t.ex. style.css?v=1)
+      return new Request(url.origin + url.pathname, { method: req.method, headers: req.headers, mode: req.mode, credentials: req.credentials, redirect: req.redirect });
+    }
+  } catch {}
+  return req;
+}
+
+// Fetch
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
+  const origReq = event.request;
+  if (origReq.method !== "GET") return;
 
-  // Bara GET hanteras av SW
-  if (req.method !== "GET") return;
-
-  const url = new URL(req.url);
+  const url = new URL(origReq.url);
   const sameOrigin = url.origin === self.location.origin;
 
-  // HTML-navigationer: nät först, annars offline-fallback
-  if (req.mode === "navigate") {
-    event.respondWith(
-      fetch(req).catch(() => caches.match("./index.html"))
-    );
+  // HTML-navigation (SPA): nät först, fallback till index.html
+  if (origReq.mode === "navigate") {
+    event.respondWith((async () => {
+      try {
+        // Om navigation preload finns – använd den
+        const preload = "navigationPreload" in self.registration
+          ? await event.preloadResponse
+          : null;
+        if (preload) return preload;
+        return await fetch(origReq);
+      } catch {
+        return caches.match("./index.html");
+      }
+    })());
     return;
   }
 
-  // Egna statiska tillgångar: cache-first
-  if (sameOrigin && ASSETS.some((p) => url.pathname.endsWith(p.replace("./", "/")))) {
-    event.respondWith(
-      caches.match(req).then((cached) => cached || fetch(req))
-    );
-    return;
-  }
-
-  // Övriga GET (bilder, fonter, ev. CDN) – stale-while-revalidate
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req)
-        .then((res) => {
-          // Klona svar innan cache-put
-          const resClone = res.clone();
-          caches.open(CACHE_DYNAMIC).then((cache) => cache.put(req, resClone));
-          return res;
-        })
-        .catch(() => cached); // offline → använd cache om den finns
-      return cached || fetchPromise;
-    })
+  // Cache-first för våra egna statiska tillgångar
+  const normReq = normalizedRequest(origReq);
+  const isStatic = sameOrigin && ASSETS.some(p =>
+    url.pathname.endsWith(p.replace("./","/"))
   );
+
+  if (isStatic) {
+    event.respondWith(
+      caches.match(normReq).then(cached => cached || fetch(origReq))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate för övriga GET
+  event.respondWith((async () => {
+    const cached = await caches.match(normReq);
+    const fetchPromise = fetch(origReq).then(async (res) => {
+      // cacha bara vettiga svar
+      if (res && (res.ok || res.type === "opaque")) {
+        const clone = res.clone();
+        const cache = await caches.open(CACHE_DYNAMIC);
+        await cache.put(normReq, clone);
+        trimCache(CACHE_DYNAMIC, DYNAMIC_MAX);
+      }
+      return res;
+    }).catch(() => cached);
+    return cached || fetchPromise;
+  })());
 });
 
-// Valfritt: möjliggör "skipWaiting" via postMessage
+// Valfritt API för snabb uppdatering
 self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
