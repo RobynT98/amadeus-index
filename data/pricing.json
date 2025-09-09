@@ -1,0 +1,24 @@
+[
+  {"cmd":"FXP","title":"FXP — Price Itinerary (keeps RBD)","desc":"Prissätter bokade klasser och skapar TST.","example":"FXP/R,UP","tags":["pricing","TST"],"category":"Pricing"},
+  {"cmd":"FXA","title":"FXA — Low fare search","desc":"Visar alternativa lägsta priser, behåller inte klasser.","example":"FXA/R,UP","tags":["pricing","search"],"category":"Pricing"},
+  {"cmd":"FXB","title":"FXB — Auto lowest (rebook)","desc":"Bokar om till lägsta tillgängliga fare.","example":"FXB/R,UP","tags":["pricing","rebook"],"category":"Pricing"},
+  {"cmd":"FXD","title":"FXD — Master pricing","desc":"Jämför prissättning mellan olika validerande carriers.","example":"FXD/R,UP","tags":["pricing","fares"],"category":"Pricing"},
+  {"cmd":"FXX","title":"FXX — Informative pricing","desc":"Indikation på pris utan att skapa TST.","example":"FXX/R,UP","tags":["pricing","informative"],"category":"Pricing"},
+  {"cmd":"FXT","title":"FXT — Choose fare alt","desc":"Välj alternativ från fare listan.","example":"FXT2","tags":["pricing","fares"],"category":"Pricing"},
+  {"cmd":"FXS","title":"FXS — Select pax/segments","desc":"Begränsa prissättning till viss pax eller segment.","example":"FXS/P1/S2","tags":["pricing","TST"],"category":"Pricing"},
+  {"cmd":"FXU","title":"FXU — Update TST","desc":"Uppdaterar TST efter rebooking.","example":"FXU3","tags":["pricing","TST"],"category":"Pricing"},
+  {"cmd":"FXZ","title":"FXZ — Book without pricing","desc":"Bokar segment utan att prissätta.","example":"FXZ4","tags":["pricing","PNR"],"category":"Pricing"},
+
+  {"cmd":"FQQ","title":"FQQ — Fare quote info","desc":"Visar detaljerad fare info för en rad.","example":"FQQ3","tags":["pricing","fares"],"category":"Pricing"},
+  {"cmd":"FQD","title":"FQD — Fare display","desc":"Fare display mellan city pair på visst datum.","example":"FQDSTOLON/D03MAY/R,UP","tags":["pricing","fares"],"category":"Pricing"},
+  {"cmd":"FQN","title":"FQN — Fare basis rules","desc":"Visar regelkapitel för fare basis.","example":"FQN01*","tags":["pricing","rules"],"category":"Pricing"},
+  {"cmd":"PEN","title":"PEN — Penalties","desc":"Visar penalty-chapter för vald fare.","example":"PEN","tags":["pricing","rules"],"category":"Pricing"},
+
+  {"cmd":"TQT","title":"TQT — TST display","desc":"Visar TST details (graphic).","example":"TQT","tags":["pricing","TST"],"category":"Pricing"},
+  {"cmd":"TTE/ALL","title":"TTE/ALL — Delete all TST","desc":"Raderar alla TST i PNR.","example":"TTE/ALL","tags":["pricing","TST"],"category":"Pricing"},
+  {"cmd":"TTE/Lx","title":"TTE/Lx — Delete line TST","desc":"Raderar en specifik TST-line.","example":"TTE/L2","tags":["pricing","TST"],"category":"Pricing"},
+
+  {"cmd":"/SBF","title":"/SBF — Include baggage","desc":"Inkludera bagage vid pricing.","example":"FXP/R,UP/SBF","tags":["pricing","baggage"],"category":"Pricing"},
+
+  {"cmd":"OFFER FLOW","title":"Offer flow (overview)","desc":"FXX → FXT → OFS → OFV → OFK → ER.","example":"FXX/R,UP → FXT1 → OFS → OFV1 → OFK1 → ER","tags":["pricing","offers"],"category":"Pricing"}
+]
