@@ -48,20 +48,46 @@
       resultsEl.appendChild(el);
     });
   }
+  
+let activeCat = 'ALL';
+const qEl = document.getElementById('q');
+const chips = [...document.querySelectorAll('.chip')];
 
-  // Indexering för sök
-  const idxText = i => [
-    i.cmd, i.title, i.desc, i.example, i.category, ...(i.tags || [])
-  ].filter(Boolean).join(' ').toLowerCase();
-  const hay = commands.map(i => ({i, text: idxText(i)}));
+// indexera för snabbare sökning
+const idxText = i => [
+  i.cmd, i.title, i.desc, i.example, i.category, ...(i.tags || [])
+].filter(Boolean).join(' ').toLowerCase();
+const hay = commands.map(i => ({ i, text: idxText(i) }));
 
-  function search(q){
-    const s = (q||'').trim().toLowerCase();
-    if (!s) return commands;
-    return hay.filter(h => h.text.includes(s)).map(h => h.i);
+function filtered() {
+  const term = (qEl.value || '').trim().toLowerCase();
+  let list = hay;
+
+  if (activeCat !== 'ALL') {
+    list = list.filter(h => (h.i.category || '').toLowerCase() === activeCat.toLowerCase());
   }
+  if (!term) return list.map(h => h.i);
 
-  // Init
-  render(commands);
-  $('#q').addEventListener('input', e => render(search(e.target.value)));
-})();
+  return list.filter(h => h.text.includes(term)).map(h => h.i);
+}
+
+function rerender() {
+  render(filtered());
+}
+
+// Event listeners
+chips.forEach(btn => {
+  btn.addEventListener('click', () => {
+    chips.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.dataset.cat;
+    rerender();
+  });
+});
+
+qEl.addEventListener('input', rerender);
+
+// init
+const allBtn = chips.find(b => b.dataset.cat === 'ALL');
+if (allBtn) allBtn.classList.add('active');
+rerender();
