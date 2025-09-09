@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amadeus Index</title>
+  <meta name="description" content="Snabbsök för Amadeus/PNR/prissättning/SSR m.m." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="wrap">
+    <h1 id="site-title">Amadeus Index</h1>
+    <p id="site-desc" class="muted">Allt samlat. Sök och kör.</p>
+    <input id="q" class="search" type="search" placeholder="Sök (cmd, titel, tagg, kategori, beskrivning)..." autofocus />
+  </header>
+
+  <main class="wrap">
+    <div id="results" class="grid"></div>
+  </main>
+
+  <footer class="wrap foot">
+    <small>© <span id="year"></span> <span id="site-owner">Conri Turesson</span></small>
+  </footer>
+
+  <script src="/app.js" defer></script>
+</body>
+    </html>
