@@ -1,0 +1,28 @@
+[
+  {"cmd":"HK","title":"HK — Holding Confirmed","desc":"Segmentet är bekräftat.","example":"HK1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"HL","title":"HL — Holding Waitlist","desc":"Segmentet ligger på väntelista.","example":"HL1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"HN","title":"HN — Holding Need","desc":"Begärd plats, väntar på svar.","example":"HN1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"NO","title":"NO — No action taken","desc":"Inget svar från carrier/system.","example":"NO1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"UC","title":"UC — Unable to Confirm","desc":"Ingen plats bekräftad, flight full/closed.","example":"UC1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"UN","title":"UN — Unable, flight not operating","desc":"Flighten är inställd / ej operativ.","example":"UN1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"US","title":"US — Unable, flight sold out","desc":"Segmentet är slutsålt.","example":"US1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"HX","title":"HX — Cancelled by airline","desc":"Segment annullerat av flygbolag.","example":"HX1","tags":["status","segments"],"category":"Status"},
+  {"cmd":"TK","title":"TK — Time Change","desc":"Flighttid ändrad av airline (requires action).","example":"TK1","tags":["status","segments"],"category":"Status"},
+
+  {"cmd":"NHP","title":"NHP — Missing Name/Seats","desc":"Felmeddelande: saknas namn eller säten i PNR.","example":"NHP","tags":["error","PNR"],"category":"Errors"},
+  {"cmd":"NEED SEG SEL","title":"NEED SEG SEL","desc":"Systemet kräver att du väljer segmentnummer.","example":"FXQ → NEED SEG SEL","tags":["error","pricing"],"category":"Errors"},
+  {"cmd":"CHECK TST","title":"CHECK TST","desc":"Systemet flaggar att TST behöver granskas.","example":"TQT → CHECK TST","tags":["error","pricing"],"category":"Errors"},
+  {"cmd":"NEED NAME","title":"NEED NAME","desc":"PNR saknar namn, måste läggas in.","example":"NM1...","tags":["error","PNR"],"category":"Errors"},
+  {"cmd":"NEED FP","title":"NEED FP","desc":"PNR saknar form of payment.","example":"FP CASH","tags":["error","ticketing"],"category":"Errors"},
+
+  {"cmd":"INVALID FORMAT","title":"INVALID FORMAT","desc":"Fel syntax i kommandot.","example":"FP/123 → INVALID FORMAT","tags":["error","system"],"category":"Errors"},
+  {"cmd":"INVALID DATE","title":"INVALID DATE","desc":"Ogiltigt datum inskrivet.","example":"AN32FEB","tags":["error","system"],"category":"Errors"},
+  {"cmd":"SEGMENT ERROR","title":"SEGMENT ERROR","desc":"Fel i segmentinput, ofta saknas info.","example":"SS1A → SEGMENT ERROR","tags":["error","system"],"category":"Errors"},
+  {"cmd":"ENTRY NOT VALID","title":"ENTRY NOT VALID","desc":"Kommandot kan inte användas i detta läge.","example":"ER i fel steg","tags":["error","system"],"category":"Errors"},
+  {"cmd":"NEED TST","title":"NEED TST","desc":"TST krävs innan biljett kan utfärdas.","example":"TTP → NEED TST","tags":["error","ticketing"],"category":"Errors"},
+  {"cmd":"TST REQUIRED","title":"TST REQUIRED","desc":"Alias till NEED TST.","example":"TTP → TST REQUIRED","tags":["error","ticketing"],"category":"Errors"},
+
+  {"cmd":"AUTH FAIL","title":"AUTH FAIL","desc":"Autorisering misslyckades (t.ex. vid FP).","example":"FP DC... → AUTH FAIL","tags":["error","payment"],"category":"Errors"},
+  {"cmd":"NEED AUTH","title":"NEED AUTH","desc":"Kräver authorisation code.","example":"FP AX.../A12345","tags":["error","payment"],"category":"Errors"},
+  {"cmd":"DUPLICATE SEGMENT","title":"DUPLICATE SEGMENT","desc":"Samma flight/klass redan bokad.","example":"SS1Y1 → DUPLICATE SEGMENT","tags":["error","PNR"],"category":"Errors"}
+    ]
